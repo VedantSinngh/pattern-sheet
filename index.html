@@ -1,454 +1,603 @@
-import React, { useState, useEffect, useMemo } from 'react';
-
-// =======================
-// 🔥 MASTER DSA DATASET (223 PROBLEMS)
-// =======================
-
-const problems = [
-
-/* =======================
-   1️⃣ Two Pointers
-======================= */
-{ pattern: 'Two Pointers', name: 'Remove Duplicates from Sorted Array', lc: 26, difficulty: 'Easy' },
-{ pattern: 'Two Pointers', name: 'Remove Element', lc: 27, difficulty: 'Easy' },
-{ pattern: 'Two Pointers', name: 'Two Sum II', lc: 167, difficulty: 'Medium' },
-{ pattern: 'Two Pointers', name: 'Move Zeroes', lc: 283, difficulty: 'Easy' },
-{ pattern: 'Two Pointers', name: 'Reverse String', lc: 344, difficulty: 'Easy' },
-{ pattern: 'Two Pointers', name: 'Container With Most Water', lc: 11, difficulty: 'Medium' },
-{ pattern: 'Two Pointers', name: 'Valid Palindrome', lc: 125, difficulty: 'Easy' },
-{ pattern: 'Two Pointers', name: 'Squares of a Sorted Array', lc: 977, difficulty: 'Easy' },
-{ pattern: 'Two Pointers', name: '3Sum', lc: 15, difficulty: 'Medium' },
-{ pattern: 'Two Pointers', name: 'Trapping Rain Water', lc: 42, difficulty: 'Hard' },
-{ pattern: 'Two Pointers', name: 'Longest Mountain in Array', lc: 845, difficulty: 'Medium' },
-{ pattern: 'Two Pointers', name: 'Palindrome Linked List', lc: 234, difficulty: 'Easy' },
-{ pattern: 'Two Pointers', name: 'Remove Nth Node From End', lc: 19, difficulty: 'Medium' },
-{ pattern: 'Two Pointers', name: 'Reorder List', lc: 143, difficulty: 'Medium' },
-
-/* =======================
-   2️⃣ Sliding Window
-======================= */
-{ pattern: 'Sliding Window', name: 'Maximum Average Subarray I', lc: 643, difficulty: 'Easy' },
-{ pattern: 'Sliding Window', name: 'Minimum Size Subarray Sum', lc: 209, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Longest Substring Without Repeating Characters', lc: 3, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Subarray Product Less Than K', lc: 713, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Permutation in String', lc: 567, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Find All Anagrams in a String', lc: 438, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Sliding Window Maximum', lc: 239, difficulty: 'Hard' },
-{ pattern: 'Sliding Window', name: 'Longest Repeating Character Replacement', lc: 424, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Count Number of Nice Subarrays', lc: 1248, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Longest Substring with At Most K Distinct Characters', lc: 340, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Maximum Number of Vowels in a Substring', lc: 1456, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Count Good Substrings', lc: 1876, difficulty: 'Easy' },
-{ pattern: 'Sliding Window', name: 'Maximum Erasure Value', lc: 1695, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Max Consecutive Ones III', lc: 1004, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Binary Subarrays With Sum', lc: 930, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Longest Subarray of 1s After Deleting One Element', lc: 1493, difficulty: 'Medium' },
-{ pattern: 'Sliding Window', name: 'Number of Subarrays with Odd Sum', lc: 1524, difficulty: 'Medium' },
-
-/* =======================
-   3️⃣ Prefix Sum
-======================= */
-{ pattern: 'Prefix Sum', name: 'Range Sum Query – Immutable', lc: 303, difficulty: 'Easy' },
-{ pattern: 'Prefix Sum', name: 'Subarray Sum Equals K', lc: 560, difficulty: 'Medium' },
-{ pattern: 'Prefix Sum', name: 'Maximum Size Subarray Sum Equals K', lc: 325, difficulty: 'Medium' },
-{ pattern: 'Prefix Sum', name: 'Find Pivot Index', lc: 724, difficulty: 'Easy' },
-{ pattern: 'Prefix Sum', name: 'Continuous Subarray Sum', lc: 523, difficulty: 'Medium' },
-{ pattern: 'Prefix Sum', name: 'Number of Subarrays with Bounded Maximum', lc: 795, difficulty: 'Medium' },
-
-/* =======================
-   4️⃣ Fast & Slow Pointer
-======================= */
-{ pattern: 'Fast & Slow Pointer', name: 'Linked List Cycle', lc: 141, difficulty: 'Easy' },
-{ pattern: 'Fast & Slow Pointer', name: 'Linked List Cycle II', lc: 142, difficulty: 'Medium' },
-{ pattern: 'Fast & Slow Pointer', name: 'Happy Number', lc: 202, difficulty: 'Easy' },
-{ pattern: 'Fast & Slow Pointer', name: 'Find the Duplicate Number', lc: 287, difficulty: 'Medium' },
-{ pattern: 'Fast & Slow Pointer', name: 'Middle of the Linked List', lc: 876, difficulty: 'Easy' },
-
-/* =======================
-   5️⃣ Sorting / Dutch Flag
-======================= */
-{ pattern: 'Sorting', name: 'Sort Colors', lc: 75, difficulty: 'Medium' },
-
-/* =======================
-   6️⃣ Intervals
-======================= */
-{ pattern: 'Intervals', name: 'Merge Intervals', lc: 56, difficulty: 'Medium' },
-{ pattern: 'Intervals', name: 'Insert Interval', lc: 57, difficulty: 'Medium' },
-{ pattern: 'Intervals', name: 'Meeting Rooms', lc: 252, difficulty: 'Easy' },
-{ pattern: 'Intervals', name: 'Meeting Rooms II', lc: 253, difficulty: 'Medium' },
-{ pattern: 'Intervals', name: 'Interval List Intersections', lc: 986, difficulty: 'Medium' },
-{ pattern: 'Intervals', name: 'Employee Free Time', lc: 759, difficulty: 'Hard' },
-{ pattern: 'Intervals', name: 'Minimum Number of Arrows to Burst Balloons', lc: 452, difficulty: 'Medium' },
-{ pattern: 'Intervals', name: 'Non-overlapping Intervals', lc: 435, difficulty: 'Medium' },
-{ pattern: 'Intervals', name: 'Remove Covered Intervals', lc: 1288, difficulty: 'Medium' },
-{ pattern: 'Intervals', name: 'Summary Ranges', lc: 228, difficulty: 'Easy' },
-
-/* =======================
-   7️⃣ Binary Search
-======================= */
-{ pattern: 'Binary Search', name: 'Binary Search', lc: 704, difficulty: 'Easy' },
-{ pattern: 'Binary Search', name: 'First Bad Version', lc: 278, difficulty: 'Easy' },
-{ pattern: 'Binary Search', name: 'Search Insert Position', lc: 35, difficulty: 'Easy' },
-{ pattern: 'Binary Search', name: 'Search in Rotated Sorted Array', lc: 33, difficulty: 'Medium' },
-{ pattern: 'Binary Search', name: 'Find Minimum in Rotated Sorted Array', lc: 153, difficulty: 'Medium' },
-{ pattern: 'Binary Search', name: 'Koko Eating Bananas', lc: 875, difficulty: 'Medium' },
-{ pattern: 'Binary Search', name: 'Capacity To Ship Packages Within D Days', lc: 1011, difficulty: 'Medium' },
-{ pattern: 'Binary Search', name: 'Split Array Largest Sum', lc: 410, difficulty: 'Hard' },
-{ pattern: 'Binary Search', name: 'Median of Two Sorted Arrays', lc: 4, difficulty: 'Hard' },
-
-/* =======================
-   8️⃣ Hashing
-======================= */
-{ pattern: 'Hashing', name: 'Two Sum', lc: 1, difficulty: 'Easy' },
-{ pattern: 'Hashing', name: 'Group Anagrams', lc: 49, difficulty: 'Medium' },
-{ pattern: 'Hashing', name: 'Valid Anagram', lc: 242, difficulty: 'Easy' },
-{ pattern: 'Hashing', name: 'Isomorphic Strings', lc: 205, difficulty: 'Easy' },
-{ pattern: 'Hashing', name: 'Word Pattern', lc: 290, difficulty: 'Easy' },
-{ pattern: 'Hashing', name: 'Longest Consecutive Sequence', lc: 128, difficulty: 'Medium' },
-
-/* =======================
-   9️⃣ Stack
-======================= */
-{ pattern: 'Stack', name: 'Valid Parentheses', lc: 20, difficulty: 'Easy' },
-{ pattern: 'Stack', name: 'Min Stack', lc: 155, difficulty: 'Medium' },
-{ pattern: 'Stack', name: 'Daily Temperatures', lc: 739, difficulty: 'Medium' },
-{ pattern: 'Stack', name: 'Next Greater Element I', lc: 496, difficulty: 'Easy' },
-{ pattern: 'Stack', name: 'Next Greater Element II', lc: 503, difficulty: 'Medium' },
-{ pattern: 'Stack', name: 'Largest Rectangle in Histogram', lc: 84, difficulty: 'Hard' },
-
-/* =======================
-   🔟 Heap
-======================= */
-{ pattern: 'Heap', name: 'Kth Largest Element in an Array', lc: 215, difficulty: 'Medium' },
-{ pattern: 'Heap', name: 'Top K Frequent Elements', lc: 347, difficulty: 'Medium' },
-{ pattern: 'Heap', name: 'Find Median from Data Stream', lc: 295, difficulty: 'Hard' },
-
-/* =======================
-   1️⃣1️⃣ Tree DFS
-======================= */
-{ pattern: 'Tree DFS', name: 'Maximum Depth of Binary Tree', lc: 104, difficulty: 'Easy' },
-{ pattern: 'Tree DFS', name: 'Diameter of Binary Tree', lc: 543, difficulty: 'Easy' },
-{ pattern: 'Tree DFS', name: 'Invert Binary Tree', lc: 226, difficulty: 'Easy' },
-{ pattern: 'Tree DFS', name: 'Validate Binary Search Tree', lc: 98, difficulty: 'Medium' },
-{ pattern: 'Tree DFS', name: 'Lowest Common Ancestor of a Binary Tree', lc: 236, difficulty: 'Medium' },
-
-/* =======================
-   1️⃣2️⃣ Graph
-======================= */
-{ pattern: 'Graph', name: 'Number of Islands', lc: 200, difficulty: 'Medium' },
-{ pattern: 'Graph', name: 'Clone Graph', lc: 133, difficulty: 'Medium' },
-{ pattern: 'Graph', name: 'Course Schedule', lc: 207, difficulty: 'Medium' },
-{ pattern: 'Graph', name: 'Course Schedule II', lc: 210, difficulty: 'Medium' },
-
-/* =======================
-   1️⃣3️⃣ Dynamic Programming
-======================= */
-{ pattern: 'Dynamic Programming', name: 'Climbing Stairs', lc: 70, difficulty: 'Easy' },
-{ pattern: 'Dynamic Programming', name: 'House Robber', lc: 198, difficulty: 'Medium' },
-{ pattern: 'Dynamic Programming', name: 'Unique Paths', lc: 62, difficulty: 'Medium' },
-{ pattern: 'Dynamic Programming', name: 'Minimum Path Sum', lc: 64, difficulty: 'Medium' },
-{ pattern: 'Dynamic Programming', name: 'Longest Common Subsequence', lc: 1143, difficulty: 'Medium' },
-
-/* =======================
-   1️⃣4️⃣ Backtracking
-======================= */
-{ pattern: 'Backtracking', name: 'Subsets', lc: 78, difficulty: 'Medium' },
-{ pattern: 'Backtracking', name: 'Permutations', lc: 46, difficulty: 'Medium' },
-{ pattern: 'Backtracking', name: 'Combination Sum', lc: 39, difficulty: 'Medium' },
-{ pattern: 'Backtracking', name: 'Generate Parentheses', lc: 22, difficulty: 'Medium' },
-
-/* =======================
-   1️⃣5️⃣ Greedy
-======================= */
-{ pattern: 'Greedy', name: 'Jump Game', lc: 55, difficulty: 'Medium' },
-{ pattern: 'Greedy', name: 'Jump Game II', lc: 45, difficulty: 'Medium' },
-{ pattern: 'Greedy', name: 'Gas Station', lc: 134, difficulty: 'Medium' },
-{ pattern: 'Greedy', name: 'Candy', lc: 135, difficulty: 'Hard' },
-
-/* =======================
-   1️⃣6️⃣ Bit Manipulation
-======================= */
-{ pattern: 'Bit Manipulation', name: 'Single Number', lc: 136, difficulty: 'Easy' },
-{ pattern: 'Bit Manipulation', name: 'Power of Two', lc: 231, difficulty: 'Easy' },
-
-];
-<!-- export default dsaProblems; -->
-
-export default function DSATracker() {
-  const [solvedData, setSolvedData] = useState({});
-  const [notesData, setNotesData] = useState({});
-  const [patternFilter, setPatternFilter] = useState('all');
-  const [difficultyFilter, setDifficultyFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
-
-  useEffect(() => {
-    const saved = localStorage.getItem('dsaSolved');
-    const savedNotes = localStorage.getItem('dsaNotes');
-    if (saved) setSolvedData(JSON.parse(saved));
-    if (savedNotes) setNotesData(JSON.parse(savedNotes));
-  }, []);
-
-  const patterns = useMemo(() => {
-    return [...new Set(problems.map(p => p.pattern))].sort();
-  }, []);
-
-  const getKey = (p) => `${p.lc}-${slugify(p.name)}`;
-  
-  const slugify = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-
-  const toggleSolved = (key) => {
-    const newSolved = { ...solvedData };
-    if (newSolved[key]) {
-      delete newSolved[key];
-    } else {
-      newSolved[key] = true;
-    }
-    setSolvedData(newSolved);
-    localStorage.setItem('dsaSolved', JSON.stringify(newSolved));
-  };
-
-  const saveNote = (key, value) => {
-    const newNotes = { ...notesData, [key]: value };
-    setNotesData(newNotes);
-    localStorage.setItem('dsaNotes', JSON.stringify(newNotes));
-  };
-
-  const filteredProblems = useMemo(() => {
-    let filtered = problems;
-    if (patternFilter !== 'all') filtered = filtered.filter(p => p.pattern === patternFilter);
-    if (difficultyFilter !== 'all') filtered = filtered.filter(p => p.difficulty === difficultyFilter);
-    if (searchTerm) filtered = filtered.filter(p => 
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.pattern.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    if (statusFilter === 'solved') filtered = filtered.filter(p => solvedData[getKey(p)]);
-    if (statusFilter === 'unsolved') filtered = filtered.filter(p => !solvedData[getKey(p)]);
-    return filtered;
-  }, [patternFilter, difficultyFilter, statusFilter, searchTerm, solvedData]);
-
-  const stats = useMemo(() => {
-    const total = problems.length;
-    const solved = Object.keys(solvedData).length;
-    let easy = 0, medium = 0, hard = 0;
-    
-    problems.forEach(p => {
-      const key = getKey(p);
-      if (solvedData[key]) {
-        if (p.difficulty === 'Easy') easy++;
-        if (p.difficulty === 'Medium') medium++;
-        if (p.difficulty === 'Hard') hard++;
-      }
-    });
-
-    const percent = total === 0 ? 0 : Math.round((solved / total) * 100);
-    return { total, solved, easy, medium, hard, percent };
-  }, [solvedData]);
-
-  const exportToCSV = () => {
-    let csv = 'Problem,LeetCode,Pattern,Difficulty,Solved,Notes\n';
-    problems.forEach(p => {
-      const key = getKey(p);
-      const solved = solvedData[key] ? 'Yes' : 'No';
-      const notes = (notesData[key] || '').replace(/"/g, '""');
-      csv += `"${p.name}",${p.lc},"${p.pattern}",${p.difficulty},${solved},"${notes}"\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'DSA_Master_Tracker.csv';
-    link.click();
-  };
-
-  const resetProgress = () => {
-    if (!confirm('This will clear all progress and notes. Continue?')) return;
-    setSolvedData({});
-    setNotesData({});
-    localStorage.removeItem('dsaSolved');
-    localStorage.removeItem('dsaNotes');
-  };
-
-  return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="max-w-[1600px] mx-auto">
-        {/* Header */}
-        <div className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-lg">
-          <div className="px-6 py-6 md:px-10">
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white rounded-md flex items-center justify-center font-bold text-black text-lg">
-                  D
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Master Tracker - Track Your Coding Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .gradient-border {
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-black text-white antialiased">
+    <div class="max-w-[1600px] mx-auto">
+        <!-- Header -->
+        <div class="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-xl">
+            <div class="px-6 py-6 md:px-10">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-white to-zinc-300 rounded-xl flex items-center justify-center font-bold text-black text-lg shadow-lg">
+                            D
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold tracking-tight">DSA Master Tracker</h1>
+                            <p class="text-xs text-zinc-500">Master 223 DSA Problems for Interviews</p>
+                        </div>
+                    </div>
                 </div>
-                <h1 className="text-2xl font-semibold tracking-tight">DSA Master Tracker</h1>
-              </div>
+                
+                <!-- Stats Grid -->
+                <div id="statsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <!-- Stats will be rendered here -->
+                </div>
             </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="px-6 py-6 md:px-10 bg-zinc-950 border-b border-zinc-800">
+            <div class="flex flex-wrap gap-3">
+                <div class="flex-1 min-w-[280px] relative group">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 pointer-events-none transition-colors group-focus-within:text-zinc-400">🔍</span>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search problems by name or pattern..."
+                        class="w-full pl-11 pr-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:bg-black transition-all focus:ring-2 focus:ring-zinc-800"
+                    />
+                </div>
+                
+                <select id="patternFilter" class="px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-white cursor-pointer hover:border-zinc-600 focus:outline-none focus:border-zinc-600 transition-all min-w-[180px] focus:ring-2 focus:ring-zinc-800">
+                    <option value="all">All Patterns</option>
+                </select>
+
+                <select id="difficultyFilter" class="px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-white cursor-pointer hover:border-zinc-600 focus:outline-none focus:border-zinc-600 transition-all focus:ring-2 focus:ring-zinc-800">
+                    <option value="all">All Difficulties</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+
+                <select id="statusFilter" class="px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-white cursor-pointer hover:border-zinc-600 focus:outline-none focus:border-zinc-600 transition-all focus:ring-2 focus:ring-zinc-800">
+                    <option value="all">All Status</option>
+                    <option value="solved">Solved</option>
+                    <option value="unsolved">Unsolved</option>
+                </select>
+
+                <button onclick="exportToCSV()" class="px-5 py-3 bg-white text-black rounded-xl text-sm font-semibold hover:bg-zinc-200 hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2 shadow-md">
+                    <span>📥</span> Export CSV
+                </button>
+
+                <button onclick="resetProgress()" class="px-5 py-3 bg-zinc-900 border border-zinc-800 text-white rounded-xl text-sm font-semibold hover:border-zinc-600 hover:bg-zinc-800 transition-all flex items-center gap-2">
+                    <span>🔄</span> Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="px-6 pb-10 md:px-10 overflow-x-auto">
+            <table class="w-full">
+                <thead class="sticky top-[180px] bg-black z-10">
+                    <tr class="border-b border-zinc-800">
+                        <th class="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider w-12">✓</th>
+                        <th class="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Problem</th>
+                        <th class="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Difficulty</th>
+                        <th class="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Pattern</th>
+                        <th class="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Link</th>
+                        <th class="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider w-48">Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Table rows will be rendered here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <footer class="border-t border-zinc-800 bg-zinc-950 px-6 py-8 md:px-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="text-center md:text-left">
+                    <p class="text-sm text-zinc-400">Built for coding interview preparation</p>
+                    <p class="text-xs text-zinc-600 mt-1">223 DSA Problems • Track your progress, master DSA patterns</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-zinc-400 hover:text-white transition-colors text-sm">GitHub</a>
+                    <span class="text-zinc-700">•</span>
+                    <a href="https://leetcode.com" target="_blank" rel="noopener noreferrer" class="text-zinc-400 hover:text-white transition-colors text-sm">LeetCode</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const problems = [
+            /* Two Pointers (1-14) */
+            { pattern: 'Two Pointers', name: 'Remove Duplicates from Sorted Array', lc: 26, difficulty: 'Easy' },
+            { pattern: 'Two Pointers', name: 'Remove Element', lc: 27, difficulty: 'Easy' },
+            { pattern: 'Two Pointers', name: 'Two Sum II – Input Array Is Sorted', lc: 167, difficulty: 'Medium' },
+            { pattern: 'Two Pointers', name: 'Move Zeroes', lc: 283, difficulty: 'Easy' },
+            { pattern: 'Two Pointers', name: 'Reverse String', lc: 344, difficulty: 'Easy' },
+            { pattern: 'Two Pointers', name: 'Container With Most Water', lc: 11, difficulty: 'Medium' },
+            { pattern: 'Two Pointers', name: 'Valid Palindrome', lc: 125, difficulty: 'Easy' },
+            { pattern: 'Two Pointers', name: 'Squares of a Sorted Array', lc: 977, difficulty: 'Easy' },
+            { pattern: 'Two Pointers', name: '3Sum', lc: 15, difficulty: 'Medium' },
+            { pattern: 'Two Pointers', name: 'Trapping Rain Water', lc: 42, difficulty: 'Hard' },
+            { pattern: 'Two Pointers', name: 'Longest Mountain in Array', lc: 845, difficulty: 'Medium' },
+            { pattern: 'Two Pointers', name: 'Palindrome Linked List', lc: 234, difficulty: 'Easy' },
+            { pattern: 'Two Pointers', name: 'Remove Nth Node From End', lc: 19, difficulty: 'Medium' },
+            { pattern: 'Two Pointers', name: 'Reorder List', lc: 143, difficulty: 'Medium' },
+
+            /* Sliding Window (15-32) */
+            { pattern: 'Sliding Window', name: 'Maximum Average Subarray I', lc: 643, difficulty: 'Easy' },
+            { pattern: 'Sliding Window', name: 'Minimum Size Subarray Sum', lc: 209, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Longest Substring Without Repeating Characters', lc: 3, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Subarray Product Less Than K', lc: 713, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Permutation in String', lc: 567, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Find All Anagrams in a String', lc: 438, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Sliding Window Maximum', lc: 239, difficulty: 'Hard' },
+            { pattern: 'Sliding Window', name: 'Longest Repeating Character Replacement', lc: 424, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Count Number of Nice Subarrays', lc: 1248, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Longest Substring with At Most K Distinct Characters', lc: 340, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Maximum Number of Vowels in a Substring', lc: 1456, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Count Good Substrings', lc: 1876, difficulty: 'Easy' },
+            { pattern: 'Sliding Window', name: 'Maximum Erasure Value', lc: 1695, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Max Consecutive Ones III', lc: 1004, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Binary Subarrays With Sum', lc: 930, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Longest Subarray of 1s After Deleting One Element', lc: 1493, difficulty: 'Medium' },
+            { pattern: 'Sliding Window', name: 'Number of Subarrays with Odd Sum', lc: 1524, difficulty: 'Medium' },
+
+            /* Prefix Sum (33-39) */
+            { pattern: 'Prefix Sum', name: 'Range Sum Query – Immutable', lc: 303, difficulty: 'Easy' },
+            { pattern: 'Prefix Sum', name: 'Subarray Sum Equals K', lc: 560, difficulty: 'Medium' },
+            { pattern: 'Prefix Sum', name: 'Maximum Size Subarray Sum Equals K', lc: 325, difficulty: 'Medium' },
+            { pattern: 'Prefix Sum', name: 'Find Pivot Index', lc: 724, difficulty: 'Easy' },
+            { pattern: 'Prefix Sum', name: 'Continuous Subarray Sum', lc: 523, difficulty: 'Medium' },
+            { pattern: 'Prefix Sum', name: 'Longest Subarray With Sum at Most K', lc: 862, difficulty: 'Hard' },
+            { pattern: 'Prefix Sum', name: 'Number of Subarrays with Bounded Maximum', lc: 795, difficulty: 'Medium' },
+
+            /* Fast & Slow Pointer (40-49) */
+            { pattern: 'Fast & Slow Pointer', name: 'Linked List Cycle Detection', lc: 141, difficulty: 'Easy' },
+            { pattern: 'Fast & Slow Pointer', name: 'Linked List Cycle II', lc: 142, difficulty: 'Medium' },
+            { pattern: 'Fast & Slow Pointer', name: 'Detect Loop Length in Linked List', lc: 141, difficulty: 'Medium' },
+            { pattern: 'Fast & Slow Pointer', name: 'Happy Number', lc: 202, difficulty: 'Easy' },
+            { pattern: 'Fast & Slow Pointer', name: 'Find the Duplicate Number', lc: 287, difficulty: 'Medium' },
+            { pattern: 'Fast & Slow Pointer', name: 'Circular Array Loop', lc: 457, difficulty: 'Medium' },
+            { pattern: 'Fast & Slow Pointer', name: 'Intersection of Two Linked Lists', lc: 160, difficulty: 'Easy' },
+            { pattern: 'Fast & Slow Pointer', name: 'Detect Cycle in Circular Linked List', lc: 141, difficulty: 'Medium' },
+            { pattern: 'Fast & Slow Pointer', name: 'Find Middle of Linked List', lc: 876, difficulty: 'Easy' },
+            { pattern: 'Fast & Slow Pointer', name: 'Find Middle of Circular Linked List', lc: 876, difficulty: 'Medium' },
+
+            /* Sorting / Dutch Flag (50-52) */
+            { pattern: 'Sorting', name: 'Sort Colors', lc: 75, difficulty: 'Medium' },
+            { pattern: 'Sorting', name: 'Merge Sorted Interval Lists', lc: 56, difficulty: 'Medium' },
+            { pattern: 'Sorting', name: 'Merge K Sorted Interval Lists', lc: 23, difficulty: 'Hard' },
+
+            /* Intervals (53-66) */
+            { pattern: 'Intervals', name: 'Merge Intervals', lc: 56, difficulty: 'Medium' },
+            { pattern: 'Intervals', name: 'Insert Interval', lc: 57, difficulty: 'Medium' },
+            { pattern: 'Intervals', name: 'Meeting Rooms I', lc: 252, difficulty: 'Easy' },
+            { pattern: 'Intervals', name: 'Meeting Rooms II', lc: 253, difficulty: 'Medium' },
+            { pattern: 'Intervals', name: 'Interval List Intersections', lc: 986, difficulty: 'Medium' },
+            { pattern: 'Intervals', name: 'Employee Free Time', lc: 759, difficulty: 'Hard' },
+            { pattern: 'Intervals', name: 'Minimum Number of Arrows to Burst Balloons', lc: 452, difficulty: 'Medium' },
+            { pattern: 'Intervals', name: 'Non-overlapping Intervals', lc: 435, difficulty: 'Medium' },
+            { pattern: 'Intervals', name: 'Remove Covered Intervals', lc: 1288, difficulty: 'Medium' },
+            { pattern: 'Intervals', name: 'Find Right Interval', lc: 436, difficulty: 'Medium' },
+            { pattern: 'Intervals', name: 'Summary Ranges', lc: 228, difficulty: 'Easy' },
+            { pattern: 'Intervals', name: 'Car Pooling', lc: 1094, difficulty: 'Medium' },
+            { pattern: 'Intervals', name: 'Range Module', lc: 715, difficulty: 'Hard' },
+            { pattern: 'Intervals', name: 'Minimum Arrows to Burst Balloons', lc: 452, difficulty: 'Medium' },
+
+            /* Binary Search (67-78) */
+            { pattern: 'Binary Search', name: 'Binary Search', lc: 704, difficulty: 'Easy' },
+            { pattern: 'Binary Search', name: 'First Bad Version', lc: 278, difficulty: 'Easy' },
+            { pattern: 'Binary Search', name: 'Search Insert Position', lc: 35, difficulty: 'Easy' },
+            { pattern: 'Binary Search', name: 'Guess Number Higher or Lower', lc: 374, difficulty: 'Easy' },
+            { pattern: 'Binary Search', name: 'Search a 2D Matrix', lc: 74, difficulty: 'Medium' },
+            { pattern: 'Binary Search', name: 'Search in Rotated Sorted Array', lc: 33, difficulty: 'Medium' },
+            { pattern: 'Binary Search', name: 'Find Peak Element', lc: 162, difficulty: 'Medium' },
+            { pattern: 'Binary Search', name: 'Find Minimum in Rotated Sorted Array', lc: 153, difficulty: 'Medium' },
+            { pattern: 'Binary Search', name: 'Koko Eating Bananas', lc: 875, difficulty: 'Medium' },
+            { pattern: 'Binary Search', name: 'Capacity To Ship Packages Within D Days', lc: 1011, difficulty: 'Medium' },
+            { pattern: 'Binary Search', name: 'Minimum Days to Make m Bouquets', lc: 1482, difficulty: 'Medium' },
+            { pattern: 'Binary Search', name: 'Split Array Largest Sum', lc: 410, difficulty: 'Hard' },
+
+            /* Advanced Binary Search (79-81) */
+            { pattern: 'Binary Search', name: 'Median of Two Sorted Arrays', lc: 4, difficulty: 'Hard' },
+            { pattern: 'Binary Search', name: 'Kth Smallest Element in a Sorted Matrix', lc: 378, difficulty: 'Medium' },
+            { pattern: 'Binary Search', name: 'Kth Smallest Prime Fraction', lc: 786, difficulty: 'Hard' },
+
+            /* Hashing (82-93) */
+            { pattern: 'Hashing', name: 'Two Sum', lc: 1, difficulty: 'Easy' },
+            { pattern: 'Hashing', name: 'Group Anagrams', lc: 49, difficulty: 'Medium' },
+            { pattern: 'Hashing', name: 'Longest Substring Without Repeating Characters', lc: 3, difficulty: 'Medium' },
+            { pattern: 'Hashing', name: 'Subarray Sum Equals K', lc: 560, difficulty: 'Medium' },
+            { pattern: 'Hashing', name: 'Top K Frequent Elements', lc: 347, difficulty: 'Medium' },
+            { pattern: 'Hashing', name: 'Isomorphic Strings', lc: 205, difficulty: 'Easy' },
+            { pattern: 'Hashing', name: 'Word Pattern', lc: 290, difficulty: 'Easy' },
+            { pattern: 'Hashing', name: 'Contains Duplicate', lc: 217, difficulty: 'Easy' },
+            { pattern: 'Hashing', name: 'Valid Anagram', lc: 242, difficulty: 'Easy' },
+            { pattern: 'Hashing', name: 'Longest Consecutive Sequence', lc: 128, difficulty: 'Medium' },
+            { pattern: 'Hashing', name: 'Find Duplicate Subtrees', lc: 652, difficulty: 'Medium' },
+            { pattern: 'Hashing', name: 'Binary Tree Vertical Order Traversal', lc: 314, difficulty: 'Medium' },
+
+            /* Stack (94-106) */
+            { pattern: 'Stack', name: 'Valid Parentheses', lc: 20, difficulty: 'Easy' },
+            { pattern: 'Stack', name: 'Min Stack', lc: 155, difficulty: 'Medium' },
+            { pattern: 'Stack', name: 'Daily Temperatures', lc: 739, difficulty: 'Medium' },
+            { pattern: 'Stack', name: 'Next Greater Element I', lc: 496, difficulty: 'Easy' },
+            { pattern: 'Stack', name: 'Next Greater Element II', lc: 503, difficulty: 'Medium' },
+            { pattern: 'Stack', name: 'Decode String', lc: 394, difficulty: 'Medium' },
+            { pattern: 'Stack', name: 'Evaluate Reverse Polish Notation', lc: 150, difficulty: 'Medium' },
+            { pattern: 'Stack', name: 'Remove All Adjacent Duplicates in String', lc: 1047, difficulty: 'Easy' },
+            { pattern: 'Stack', name: 'Remove K Digits', lc: 402, difficulty: 'Medium' },
+            { pattern: 'Stack', name: 'Largest Rectangle in Histogram', lc: 84, difficulty: 'Hard' },
+            { pattern: 'Stack', name: 'Asteroid Collision', lc: 735, difficulty: 'Medium' },
+            { pattern: 'Stack', name: 'Backspace String Compare', lc: 844, difficulty: 'Easy' },
+            { pattern: 'Stack', name: 'Simplify Path', lc: 71, difficulty: 'Medium' },
+
+            /* Queue / BFS (107-116) */
+            { pattern: 'Queue / BFS', name: 'Binary Tree Level Order Traversal', lc: 102, difficulty: 'Medium' },
+            { pattern: 'Queue / BFS', name: 'Perfect Squares', lc: 279, difficulty: 'Medium' },
+            { pattern: 'Queue / BFS', name: 'Rotten Oranges', lc: 994, difficulty: 'Medium' },
+            { pattern: 'Queue / BFS', name: 'Course Schedule', lc: 207, difficulty: 'Medium' },
+            { pattern: 'Queue / BFS', name: 'Walls and Gates', lc: 286, difficulty: 'Medium' },
+            { pattern: 'Queue / BFS', name: 'Number of Recent Calls', lc: 933, difficulty: 'Easy' },
+            { pattern: 'Queue / BFS', name: 'Dota2 Senate', lc: 649, difficulty: 'Medium' },
+            { pattern: 'Queue / BFS', name: 'Open the Lock', lc: 752, difficulty: 'Medium' },
+            { pattern: 'Queue / BFS', name: 'Design Circular Queue', lc: 622, difficulty: 'Medium' },
+            { pattern: 'Queue / BFS', name: 'Moving Average from Data Stream', lc: 346, difficulty: 'Easy' },
+
+            /* BFS / Simulation (117-123) */
+            { pattern: 'BFS / Simulation', name: 'Reveal Cards in Increasing Order', lc: 950, difficulty: 'Medium' },
+            { pattern: 'BFS / Simulation', name: 'Time Needed to Inform All Employees', lc: 1376, difficulty: 'Medium' },
+            { pattern: 'BFS / Simulation', name: 'Rotting Oranges', lc: 994, difficulty: 'Medium' },
+            { pattern: 'BFS / Simulation', name: 'Course Schedule II', lc: 210, difficulty: 'Medium' },
+            { pattern: 'BFS / Simulation', name: 'Number of Provinces', lc: 547, difficulty: 'Medium' },
+            { pattern: 'BFS / Simulation', name: 'Path Exists in Graph', lc: 1971, difficulty: 'Easy' },
+            { pattern: 'BFS / Simulation', name: 'Flood Fill', lc: 733, difficulty: 'Easy' },
+
+            /* Heap / Priority Queue (124-135) */
+            { pattern: 'Heap / Priority Queue', name: 'Kth Largest Element in an Array', lc: 215, difficulty: 'Medium' },
+            { pattern: 'Heap / Priority Queue', name: 'Top K Frequent Elements', lc: 347, difficulty: 'Medium' },
+            { pattern: 'Heap / Priority Queue', name: 'Merge K Sorted Lists', lc: 23, difficulty: 'Hard' },
+            { pattern: 'Heap / Priority Queue', name: 'Find Median from Data Stream', lc: 295, difficulty: 'Hard' },
+            { pattern: 'Heap / Priority Queue', name: 'K Closest Points to Origin', lc: 973, difficulty: 'Medium' },
+            { pattern: 'Heap / Priority Queue', name: 'Task Scheduler', lc: 621, difficulty: 'Medium' },
+            { pattern: 'Heap / Priority Queue', name: 'Reorganize String', lc: 767, difficulty: 'Medium' },
+            { pattern: 'Heap / Priority Queue', name: 'Minimum Cost to Connect Ropes', lc: 1167, difficulty: 'Medium' },
+            { pattern: 'Heap / Priority Queue', name: 'Last Stone Weight', lc: 1046, difficulty: 'Easy' },
+            { pattern: 'Heap / Priority Queue', name: 'Sliding Window Median', lc: 480, difficulty: 'Hard' },
+            { pattern: 'Heap / Priority Queue', name: 'Sort Characters by Frequency', lc: 451, difficulty: 'Medium' },
+            { pattern: 'Heap / Priority Queue', name: 'Smallest Range Covering K Lists', lc: 632, difficulty: 'Hard' },
+
+            /* Tree DFS (136-146) */
+            { pattern: 'Tree DFS', name: 'Maximum Depth of Binary Tree', lc: 104, difficulty: 'Easy' },
+            { pattern: 'Tree DFS', name: 'Diameter of Binary Tree', lc: 543, difficulty: 'Easy' },
+            { pattern: 'Tree DFS', name: 'Same Tree', lc: 100, difficulty: 'Easy' },
+            { pattern: 'Tree DFS', name: 'Symmetric Tree', lc: 101, difficulty: 'Easy' },
+            { pattern: 'Tree DFS', name: 'Invert Binary Tree', lc: 226, difficulty: 'Easy' },
+            { pattern: 'Tree DFS', name: 'Path Sum', lc: 112, difficulty: 'Easy' },
+            { pattern: 'Tree DFS', name: 'Subtree of Another Tree', lc: 572, difficulty: 'Easy' },
+            { pattern: 'Tree DFS', name: 'Lowest Common Ancestor', lc: 236, difficulty: 'Medium' },
+            { pattern: 'Tree DFS', name: 'Validate BST', lc: 98, difficulty: 'Medium' },
+            { pattern: 'Tree DFS', name: 'Kth Smallest in BST', lc: 230, difficulty: 'Medium' },
+            { pattern: 'Tree DFS', name: 'Serialize & Deserialize Binary Tree', lc: 297, difficulty: 'Hard' },
+
+            /* Tree BFS (147-153) */
+            { pattern: 'Tree BFS', name: 'Level Order Traversal II', lc: 107, difficulty: 'Medium' },
+            { pattern: 'Tree BFS', name: 'Average of Levels', lc: 637, difficulty: 'Easy' },
+            { pattern: 'Tree BFS', name: 'Minimum Depth of Binary Tree', lc: 111, difficulty: 'Easy' },
+            { pattern: 'Tree BFS', name: 'Right Side View', lc: 199, difficulty: 'Medium' },
+            { pattern: 'Tree BFS', name: 'Cousins in Binary Tree', lc: 993, difficulty: 'Easy' },
+            { pattern: 'Tree BFS', name: 'Largest Value in Each Tree Row', lc: 515, difficulty: 'Medium' },
+            { pattern: 'Tree BFS', name: 'Binary Tree Level Order Traversal', lc: 102, difficulty: 'Medium' },
+
+            /* Graph (154-162) */
+            { pattern: 'Graph', name: 'Number of Islands', lc: 200, difficulty: 'Medium' },
+            { pattern: 'Graph', name: 'Max Area of Island', lc: 695, difficulty: 'Medium' },
+            { pattern: 'Graph', name: 'Clone Graph', lc: 133, difficulty: 'Medium' },
+            { pattern: 'Graph', name: 'Is Graph Bipartite?', lc: 785, difficulty: 'Medium' },
+            { pattern: 'Graph', name: 'Course Schedule I', lc: 207, difficulty: 'Medium' },
+            { pattern: 'Graph', name: 'Course Schedule II', lc: 210, difficulty: 'Medium' },
+            { pattern: 'Graph', name: 'Rotting Oranges', lc: 994, difficulty: 'Medium' },
+            { pattern: 'Graph', name: 'Path Exists in Graph', lc: 1971, difficulty: 'Easy' },
+            { pattern: 'Graph', name: 'Number of Provinces', lc: 547, difficulty: 'Medium' },
+
+            /* Dijkstra / Shortest Path (163-170) */
+            { pattern: 'Dijkstra / Shortest Path', name: 'Network Delay Time', lc: 743, difficulty: 'Medium' },
+            { pattern: 'Dijkstra / Shortest Path', name: 'Path With Minimum Effort', lc: 1631, difficulty: 'Medium' },
+            { pattern: 'Dijkstra / Shortest Path', name: 'Cheapest Flights Within K Stops', lc: 787, difficulty: 'Medium' },
+            { pattern: 'Dijkstra / Shortest Path', name: 'The Maze II', lc: 505, difficulty: 'Medium' },
+            { pattern: 'Dijkstra / Shortest Path', name: 'Minimum Cost to Reach Destination in Time', lc: 1928, difficulty: 'Hard' },
+            { pattern: 'Dijkstra / Shortest Path', name: 'Find the City With Smallest Neighbors', lc: 1334, difficulty: 'Medium' },
+            { pattern: 'Dijkstra / Shortest Path', name: 'Reach the Safest Path in a Grid', lc: 2812, difficulty: 'Hard' },
+            { pattern: 'Dijkstra / Shortest Path', name: 'Trapping Rain Water II', lc: 407, difficulty: 'Hard' },
+
+            /* Trie (171-180) */
+            { pattern: 'Trie', name: 'Implement Trie', lc: 208, difficulty: 'Medium' },
+            { pattern: 'Trie', name: 'Design Add and Search Words', lc: 211, difficulty: 'Medium' },
+            { pattern: 'Trie', name: 'Replace Words', lc: 648, difficulty: 'Medium' },
+            { pattern: 'Trie', name: 'Longest Word in Dictionary', lc: 720, difficulty: 'Medium' },
+            { pattern: 'Trie', name: 'Word Search II', lc: 212, difficulty: 'Hard' },
+            { pattern: 'Trie', name: 'Prefix and Suffix Search', lc: 745, difficulty: 'Hard' },
+            { pattern: 'Trie', name: 'Palindrome Pairs', lc: 336, difficulty: 'Hard' },
+            { pattern: 'Trie', name: 'Search Suggestions System', lc: 1268, difficulty: 'Medium' },
+            { pattern: 'Trie', name: 'Stream of Characters', lc: 1032, difficulty: 'Hard' },
+            { pattern: 'Trie', name: 'Sum of Prefix Scores', lc: 2416, difficulty: 'Hard' },
+
+            /* Greedy (181-189) */
+            { pattern: 'Greedy', name: 'Assign Cookies', lc: 455, difficulty: 'Easy' },
+            { pattern: 'Greedy', name: 'Jump Game', lc: 55, difficulty: 'Medium' },
+            { pattern: 'Greedy', name: 'Jump Game II', lc: 45, difficulty: 'Medium' },
+            { pattern: 'Greedy', name: 'Gas Station', lc: 134, difficulty: 'Medium' },
+            { pattern: 'Greedy', name: 'Candy', lc: 135, difficulty: 'Hard' },
+            { pattern: 'Greedy', name: 'Merge Triplets to Form Target Triplet', lc: 1899, difficulty: 'Medium' },
+            { pattern: 'Greedy', name: 'Minimum Arrows to Burst Balloons', lc: 452, difficulty: 'Medium' },
+            { pattern: 'Greedy', name: 'Reconstruct Queue by Height', lc: 406, difficulty: 'Medium' },
+            { pattern: 'Greedy', name: 'Task Scheduler', lc: 621, difficulty: 'Medium' },
+
+            /* Dynamic Programming (190-203) */
+            { pattern: 'Dynamic Programming', name: 'Fibonacci', lc: 509, difficulty: 'Easy' },
+            { pattern: 'Dynamic Programming', name: 'Climbing Stairs', lc: 70, difficulty: 'Easy' },
+            { pattern: 'Dynamic Programming', name: 'Min Cost Climbing Stairs', lc: 746, difficulty: 'Easy' },
+            { pattern: 'Dynamic Programming', name: 'House Robber', lc: 198, difficulty: 'Medium' },
+            { pattern: 'Dynamic Programming', name: 'Unique Paths', lc: 62, difficulty: 'Medium' },
+            { pattern: 'Dynamic Programming', name: 'Minimum Path Sum', lc: 64, difficulty: 'Medium' },
+            { pattern: 'Dynamic Programming', name: 'Longest Common Subsequence', lc: 1143, difficulty: 'Medium' },
+            { pattern: 'Dynamic Programming', name: 'Longest Palindromic Subsequence', lc: 516, difficulty: 'Medium' },
+            { pattern: 'Dynamic Programming', name: 'Partition Equal Subset Sum', lc: 416, difficulty: 'Medium' },
+            { pattern: 'Dynamic Programming', name: 'Combination Sum IV', lc: 377, difficulty: 'Medium' },
+            { pattern: 'Dynamic Programming', name: 'Target Sum', lc: 494, difficulty: 'Medium' },
+            { pattern: 'Dynamic Programming', name: 'Edit Distance', lc: 72, difficulty: 'Medium' },
+            { pattern: 'Dynamic Programming', name: 'Dungeon Game', lc: 174, difficulty: 'Hard' },
+            { pattern: 'Dynamic Programming', name: 'Cherry Pickup II', lc: 1463, difficulty: 'Hard' },
+
+            /* Backtracking (204-218) */
+            { pattern: 'Backtracking', name: 'N-Queens', lc: 51, difficulty: 'Hard' },
+            { pattern: 'Backtracking', name: 'Sudoku Solver', lc: 37, difficulty: 'Hard' },
+            { pattern: 'Backtracking', name: 'Word Search', lc: 79, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Letter Combinations of Phone Number', lc: 17, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Subsets', lc: 78, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Permutations', lc: 46, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Permutations II', lc: 47, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Combination Sum', lc: 39, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Combination Sum II', lc: 40, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Palindrome Partitioning', lc: 131, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Rat in a Maze', lc: 62, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Knight\'s Tour', lc: 1197, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Restore IP Addresses', lc: 93, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Generate Parentheses', lc: 22, difficulty: 'Medium' },
+            { pattern: 'Backtracking', name: 'Expression Add Operators', lc: 282, difficulty: 'Hard' },
+
+            /* Bit Manipulation (219-223) */
+            { pattern: 'Bit Manipulation', name: 'Single Number', lc: 136, difficulty: 'Easy' },
+            { pattern: 'Bit Manipulation', name: 'Count Set Bits', lc: 338, difficulty: 'Easy' },
+            { pattern: 'Bit Manipulation', name: 'Power of Two', lc: 231, difficulty: 'Easy' },
+            { pattern: 'Bit Manipulation', name: 'Swap Numbers Using XOR', lc: 0, difficulty: 'Easy' },
+            { pattern: 'Bit Manipulation', name: 'Check / Set ith Bit', lc: 0, difficulty: 'Easy' }
+        ];
+
+        let solvedData = {};
+        let notesData = {};
+
+        function init() {
+            const savedSolved = localStorage.getItem('dsaSolved');
+            const savedNotes = localStorage.getItem('dsaNotes');
+            if (savedSolved) solvedData = JSON.parse(savedSolved);
+            if (savedNotes) notesData = JSON.parse(savedNotes);
             
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors">
-                <div className="text-xs text-zinc-400 uppercase tracking-wide mb-2">Total</div>
-                <div className="text-3xl font-bold tracking-tight">{stats.total}</div>
-              </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors">
-                <div className="text-xs text-zinc-400 uppercase tracking-wide mb-2">Solved</div>
-                <div className="text-3xl font-bold tracking-tight">{stats.solved}</div>
-                <div className="h-1 bg-zinc-800 rounded-full mt-2 overflow-hidden">
-                  <div className="h-full bg-white transition-all duration-300" style={{ width: `${stats.percent}%` }} />
+            const patterns = [...new Set(problems.map(p => p.pattern))].sort();
+            const filter = document.getElementById('patternFilter');
+            patterns.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p;
+                opt.textContent = p;
+                filter.appendChild(opt);
+            });
+            
+            renderStats();
+            renderTable();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', renderTable);
+            document.getElementById('patternFilter').addEventListener('change', renderTable);
+            document.getElementById('difficultyFilter').addEventListener('change', renderTable);
+            document.getElementById('statusFilter').addEventListener('change', renderTable);
+        }
+
+        function getKey(p) {
+            return `${p.lc}-${slugify(p.name)}`;
+        }
+
+        function slugify(text) {
+            return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        }
+
+        function renderStats() {
+            const total = problems.length;
+            const solved = Object.keys(solvedData).length;
+            let easy = 0, medium = 0, hard = 0;
+            
+            problems.forEach(p => {
+                const key = getKey(p);
+                if (solvedData[key]) {
+                    if (p.difficulty === 'Easy') easy++;
+                    if (p.difficulty === 'Medium') medium++;
+                    if (p.difficulty === 'Hard') hard++;
+                }
+            });
+
+            const percent = total === 0 ? 0 : Math.round((solved / total) * 100);
+            
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="bg-gradient-to-br from-zinc-900 to-zinc-900/50 border border-zinc-800 rounded-xl p-4 hover:border-zinc-700 transition-all hover:shadow-lg">
+                    <div class="text-xs text-zinc-400 uppercase tracking-wider mb-2">Total</div>
+                    <div class="text-3xl font-bold tracking-tight">${total}</div>
+                    <div class="text-xs text-zinc-500 mt-1">223 problems</div>
                 </div>
-              </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors">
-                <div className="text-xs text-zinc-400 uppercase tracking-wide mb-2">Easy</div>
-                <div className="text-3xl font-bold tracking-tight text-emerald-400">{stats.easy}</div>
-              </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors">
-                <div className="text-xs text-zinc-400 uppercase tracking-wide mb-2">Medium</div>
-                <div className="text-3xl font-bold tracking-tight text-yellow-400">{stats.medium}</div>
-              </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors">
-                <div className="text-xs text-zinc-400 uppercase tracking-wide mb-2">Hard</div>
-                <div className="text-3xl font-bold tracking-tight text-red-400">{stats.hard}</div>
-              </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors">
-                <div className="text-xs text-zinc-400 uppercase tracking-wide mb-2">Progress</div>
-                <div className="text-3xl font-bold tracking-tight">{stats.percent}%</div>
-              </div>
-            </div>
-          </div>
-        </div>
+                <div class="bg-gradient-to-br from-zinc-900 to-zinc-900/50 border border-zinc-800 rounded-xl p-4 hover:border-zinc-700 transition-all hover:shadow-lg">
+                    <div class="text-xs text-zinc-400 uppercase tracking-wider mb-2">Solved</div>
+                    <div class="text-3xl font-bold tracking-tight">${solved}</div>
+                    <div class="h-1.5 bg-zinc-800 rounded-full mt-3 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-white to-zinc-400 transition-all duration-500" style="width: ${percent}%"></div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-emerald-950/30 to-zinc-900/50 border border-emerald-900/50 rounded-xl p-4 hover:border-emerald-800/50 transition-all hover:shadow-lg hover:shadow-emerald-900/20">
+                    <div class="text-xs text-emerald-400/80 uppercase tracking-wider mb-2">Easy</div>
+                    <div class="text-3xl font-bold tracking-tight text-emerald-400">${easy}</div>
+                    <div class="text-xs text-emerald-500/60 mt-1">${Math.round((easy/problems.filter(p => p.difficulty === 'Easy').length)*100) || 0}%</div>
+                </div>
+                <div class="bg-gradient-to-br from-yellow-950/30 to-zinc-900/50 border border-yellow-900/50 rounded-xl p-4 hover:border-yellow-800/50 transition-all hover:shadow-lg hover:shadow-yellow-900/20">
+                    <div class="text-xs text-yellow-400/80 uppercase tracking-wider mb-2">Medium</div>
+                    <div class="text-3xl font-bold tracking-tight text-yellow-400">${medium}</div>
+                    <div class="text-xs text-yellow-500/60 mt-1">${Math.round((medium/problems.filter(p => p.difficulty === 'Medium').length)*100) || 0}%</div>
+                </div>
+                <div class="bg-gradient-to-br from-red-950/30 to-zinc-900/50 border border-red-900/50 rounded-xl p-4 hover:border-red-800/50 transition-all hover:shadow-lg hover:shadow-red-900/20">
+                    <div class="text-xs text-red-400/80 uppercase tracking-wider mb-2">Hard</div>
+                    <div class="text-3xl font-bold tracking-tight text-red-400">${hard}</div>
+                    <div class="text-xs text-red-500/60 mt-1">${Math.round((hard/problems.filter(p => p.difficulty === 'Hard').length)*100) || 0}%</div>
+                </div>
+                <div class="bg-gradient-to-br from-zinc-900 to-zinc-900/50 border border-zinc-800 rounded-xl p-4 hover:border-zinc-700 transition-all hover:shadow-lg">
+                    <div class="text-xs text-zinc-400 uppercase tracking-wider mb-2">Progress</div>
+                    <div class="text-3xl font-bold tracking-tight">${percent}%</div>
+                    <div class="text-xs text-zinc-500 mt-1">${solved}/${total}</div>
+                </div>
+            `;
+        }
 
-        {/* Controls */}
-        <div className="px-6 py-6 md:px-10 bg-zinc-950 border-b border-zinc-800 flex flex-wrap gap-3">
-          <div className="flex-1 min-w-[280px] relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 pointer-events-none">🔍</span>
-            <input
-              type="text"
-              placeholder="Search problems..."
-              className="w-full pl-11 pr-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:bg-black transition-all"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          
-          <select
-            className="px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-white cursor-pointer hover:border-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors min-w-[180px]"
-            value={patternFilter}
-            onChange={(e) => setPatternFilter(e.target.value)}
-          >
-            <option value="all">All Patterns</option>
-            {patterns.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
+        function renderTable() {
+            const patternFilter = document.getElementById('patternFilter').value;
+            const difficultyFilter = document.getElementById('difficultyFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
 
-          <select
-            className="px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-white cursor-pointer hover:border-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
-            value={difficultyFilter}
-            onChange={(e) => setDifficultyFilter(e.target.value)}
-          >
-            <option value="all">All Difficulties</option>
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
-          </select>
+            let filtered = problems;
+            if (patternFilter !== 'all') filtered = filtered.filter(p => p.pattern === patternFilter);
+            if (difficultyFilter !== 'all') filtered = filtered.filter(p => p.difficulty === difficultyFilter);
+            if (searchTerm) filtered = filtered.filter(p => 
+                p.name.toLowerCase().includes(searchTerm) ||
+                p.pattern.toLowerCase().includes(searchTerm)
+            );
+            if (statusFilter === 'solved') filtered = filtered.filter(p => solvedData[getKey(p)]);
+            if (statusFilter === 'unsolved') filtered = filtered.filter(p => !solvedData[getKey(p)]);
 
-          <select
-            className="px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-white cursor-pointer hover:border-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="all">All Status</option>
-            <option value="solved">Solved</option>
-            <option value="unsolved">Unsolved</option>
-          </select>
-
-          <button
-            onClick={exportToCSV}
-            className="px-5 py-3 bg-white text-black rounded-lg text-sm font-semibold hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center gap-2"
-          >
-            <span>📥</span> Export CSV
-          </button>
-
-          <button
-            onClick={resetProgress}
-            className="px-5 py-3 bg-zinc-900 border border-zinc-800 text-white rounded-lg text-sm font-semibold hover:border-zinc-600 transition-colors flex items-center gap-2"
-          >
-            <span>🔄</span> Reset
-          </button>
-        </div>
-
-        {/* Table */}
-        <div className="px-6 pb-10 md:px-10 overflow-x-auto">
-          <table className="w-full">
-            <thead className="sticky top-[160px] bg-black z-10">
-              <tr className="border-b border-zinc-800">
-                <th className="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wide w-12">✓</th>
-                <th className="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wide">Problem</th>
-                <th className="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wide">Difficulty</th>
-                <th className="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wide">Pattern</th>
-                <th className="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wide">Link</th>
-                <th className="px-4 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wide w-48">Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProblems.map((p) => {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = filtered.map(p => {
                 const key = getKey(p);
                 const isSolved = solvedData[key];
-                return (
-                  <tr key={key} className={`border-b border-zinc-800 hover:bg-zinc-950 transition-colors ${isSolved ? 'opacity-50' : ''}`}>
-                    <td className="px-4 py-5 text-center">
-                      <div
-                        onClick={() => toggleSolved(key)}
-                        className={`inline-block w-5 h-5 border-2 rounded cursor-pointer transition-all hover:border-zinc-400 ${
-                          isSolved ? 'bg-white border-white' : 'border-zinc-800'
-                        }`}
-                      >
-                        {isSolved && <div className="text-black text-xs font-bold leading-none flex items-center justify-center h-full">✓</div>}
-                      </div>
-                    </td>
-                    <td className="px-4 py-5">
-                      <div className="flex items-center gap-3">
-                        <span className="text-zinc-600 text-xs min-w-[45px] hidden md:inline">#{p.lc}</span>
-                        <span className="text-white font-medium text-sm">{p.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-5">
-                      <span className={`inline-block px-2.5 py-1 rounded text-[11px] font-semibold uppercase tracking-wide border ${
-                        p.difficulty === 'Easy' ? 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20' :
-                        p.difficulty === 'Medium' ? 'bg-yellow-400/10 text-yellow-400 border-yellow-400/20' :
-                        'bg-red-400/10 text-red-400 border-red-400/20'
-                      }`}>
-                        {p.difficulty}
-                      </span>
-                    </td>
-                    <td className="px-4 py-5">
-                      <span className="inline-block px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded text-xs font-medium text-zinc-400 whitespace-nowrap">
-                        {p.pattern}
-                      </span>
-                    </td>
-                    <td className="px-4 py-5">
-                      <a
-                        href={`https://leetcode.com/problems/${slugify(p.name)}/`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-zinc-400 hover:text-white transition-colors text-xs"
-                      >
-                        LeetCode →
-                      </a>
-                    </td>
-                    <td className="px-4 py-5">
-                      <textarea
-                        placeholder="Add notes..."
-                        rows="1"
-                        className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded text-xs text-white placeholder-zinc-600 resize-none focus:outline-none focus:border-zinc-600 focus:bg-black transition-all"
-                        value={notesData[key] || ''}
-                        onChange={(e) => saveNote(key, e.target.value)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
+                const difficultyClass = 
+                    p.difficulty === 'Easy' ? 'bg-emerald-400/10 text-emerald-400 border-emerald-400/30' :
+                    p.difficulty === 'Medium' ? 'bg-yellow-400/10 text-yellow-400 border-yellow-400/30' :
+                    'bg-red-400/10 text-red-400 border-red-400/30';
 
-}
+                return `
+                    <tr class="border-b border-zinc-800 hover:bg-zinc-950/50 transition-all ${isSolved ? 'opacity-50' : ''} fade-in">
+                        <td class="px-4 py-5 text-center">
+                            <div onclick="toggleSolved('${key}')" 
+                                class="inline-block w-6 h-6 border-2 rounded-md cursor-pointer transition-all hover:scale-110 ${
+                                    isSolved ? 'bg-white border-white shadow-lg shadow-white/20' : 'border-zinc-700 hover:border-zinc-500'
+                                }">
+                                ${isSolved ? '<div class="text-black text-xs font-bold leading-none flex items-center justify-center h-full">✓</div>' : ''}
+                            </div>
+                        </td>
+                        <td class="px-4 py-5">
+                            <div class="flex items-center gap-3">
+                                <span class="text-zinc-600 text-xs font-mono min-w-[50px] hidden md:inline">#${p.lc}</span>
+                                <span class="text-white font-medium text-sm hover:text-zinc-300 transition-colors">${p.name}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="inline-block px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider border ${difficultyClass} shadow-sm">
+                                ${p.difficulty}
+                            </span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="inline-block px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap hover:border-zinc-700 transition-colors">
+                                ${p.pattern}
+                            </span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <a href="https://leetcode.com/problems/${slugify(p.name)}/" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               class="text-zinc-400 hover:text-white transition-colors text-xs font-medium hover:underline">
+                                LeetCode →
+                            </a>
+                        </td>
+                        <td class="px-4 py-5">
+                            <textarea
+                                placeholder="Add notes..."
+                                rows="1"
+                                class="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-600 resize-none focus:outline-none focus:border-zinc-600 focus:bg-black transition-all focus:ring-2 focus:ring-zinc-800"
+                                onchange="saveNote('${key}', this.value)"
+                            >${notesData[key] || ''}</textarea>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            renderStats();
+        }
+
+        function toggleSolved(key) {
+            solvedData[key] = !solvedData[key];
+            localStorage.setItem('dsaSolved', JSON.stringify(solvedData));
+            renderTable();
+        }
+
+        function saveNote(key, value) {
+            notesData[key] = value;
+            localStorage.setItem('dsaNotes', JSON.stringify(notesData));
+        }
+
+        function exportToCSV() {
+            let csv = "LC,Problem,Difficulty,Pattern,Solved,Notes\n";
+            problems.forEach(p => {
+                const key = getKey(p);
+                const solved = solvedData[key] ? "Yes" : "No";
+                const notes = (notesData[key] || "").replace(/"/g, '""');
+                csv += `"${p.lc}","${p.name}","${p.difficulty}","${p.pattern}","${solved}","${notes}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "DSA_Master_Tracker_223.csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetProgress() {
+            if (!confirm("Are you sure you want to reset all progress? This will clear all solved marks and notes.")) return;
+            solvedData = {};
+            notesData = {};
+            localStorage.removeItem('dsaSolved');
+            localStorage.removeItem('dsaNotes');
+            renderTable();
+        }
+
+        document.addEventListener("DOMContentLoaded", init);
+    </script>
+</body>
+</html>
